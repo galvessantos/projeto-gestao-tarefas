@@ -39,7 +39,6 @@ public class User {
     private String username;
 
     @Column(nullable = false)
-    @Setter(AccessLevel.PROTECTED)
     private String password;
 
     @Column(nullable = false, unique = true)
