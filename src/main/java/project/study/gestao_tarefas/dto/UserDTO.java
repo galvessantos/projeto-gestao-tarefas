@@ -3,7 +3,12 @@ package project.study.gestao_tarefas.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import project.study.gestao_tarefas.enums.UserRole;
 
+import java.util.Set;
+
+@Builder
 public record UserDTO (
         @NotBlank(message = "Nome é obrigatório.")
         String name,
@@ -18,5 +23,31 @@ public record UserDTO (
 
         @NotBlank(message = "Email é obrigatório")
         @Email(message = "Email informado é inválido")
-        String email
-) {}
+        String email,
+
+        Set<UserRole> authorities
+) {
+    public UserDTO(String name, String username, String password, String email) {
+        this(name, username, password, email, null);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Set<UserRole> getAuthorities() {
+        return authorities;
+    }
+}
