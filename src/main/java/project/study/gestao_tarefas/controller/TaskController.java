@@ -47,10 +47,8 @@ public class TaskController {
     @GetMapping
     public ResponseEntity<List<TaskDTO>> getAllUserTasks(
             @AuthenticationPrincipal UserDetails userDetails) {
-
         User user = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
-
         return ResponseEntity.ok(taskService.findAllByUserId(user.getId()));
     }
 
@@ -58,13 +56,11 @@ public class TaskController {
     public ResponseEntity<TaskDTO> getTaskById(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
-
         User user = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         TaskDTO task = taskService.findById(id);
 
-        // Check if the task belongs to the user
         if (!task.userId().equals(user.getId())) {
             throw new ResourceNotFoundException("Tarefa não encontrada");
         }
@@ -77,17 +73,15 @@ public class TaskController {
             @PathVariable Long id,
             @Valid @RequestBody TaskDTO taskDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
-
+        
         User user = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
-        // First get the task to check ownership
         TaskDTO existingTask = taskService.findById(id);
         if (!existingTask.userId().equals(user.getId())) {
             throw new ResourceNotFoundException("Tarefa não encontrada");
         }
 
-        // Update the task with the new data
         TaskDTO updatedTask = taskService.update(id, taskDTO);
         return ResponseEntity.ok(updatedTask);
     }
@@ -96,11 +90,10 @@ public class TaskController {
     public ResponseEntity<Void> deleteTask(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
-
+        
         User user = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
-        // First get the task to check ownership
         TaskDTO existingTask = taskService.findById(id);
         if (!existingTask.userId().equals(user.getId())) {
             throw new ResourceNotFoundException("Tarefa não encontrada");
